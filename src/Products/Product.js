@@ -63,6 +63,7 @@ function Product() {
                 <h1>{ele.name}</h1>
                 <p>{ele.description}</p>
                 <p>₹{ele.price}</p>
+                <Link to={`/products/${ele.id}`}>More details</Link>
                 <button
                   className="w-100 p-2 btn btn-primary"
                   onClick={() => onBuyProduct(ele.id)}

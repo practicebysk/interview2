@@ -4,19 +4,25 @@ import { userList } from "./Userlist";
 
 function Registration() {
   const [registration, setRegistration] = useState({
-    name: "",
+    email: "",
     password: "",
   });
+  const [error, setError] = useState({ email: false });
   const navigation = useNavigate();
   const handleChange = (e) => {
     setRegistration({ ...registration, [e.target.name]: e.target.value });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (registration.name && registration.password) {
-      localStorage.setItem("userData", JSON.stringify(registration));
-      userList.push(registration);
-      navigation("/products");
+    if (registration.email && registration.password) {
+      const useExits = userList.find((ele) => ele.email === registration.email);
+      if (!useExits) {
+        localStorage.setItem("userData", JSON.stringify(registration));
+        userList.push(registration);
+        navigation("/products");
+      } else {
+        setError({ email: true });
+      }
     }
   };
   return (
@@ -30,16 +36,19 @@ function Registration() {
       >
         <form action="" onSubmit={(e) => handleSubmit(e)}>
           <div>
-            <label htmlFor="name">Name : </label>
+            <label htmlFor="email">Email : </label>
             <br />
             <input
-              type="name"
-              id="name"
-              value={registration.name}
-              name="name"
+              type="email"
+              id="email"
+              value={registration.email}
+              name="email"
               style={{ width: "250px", height: "30px" }}
               onChange={(e) => handleChange(e)}
             />
+            <div>
+              {error.email && <span className="text-danger">This email id already exists</span>}
+            </div>
           </div>
           <div>
             <label htmlFor="password" className="mt-2">

@@ -4,22 +4,38 @@ import { userList } from "./Userlist";
 
 function Registration() {
   const [login, setlogin] = useState({
-    name: "",
+    email: "",
     password: "",
   });
+  const [error, setError] = useState({ email: false, password: false });
   const navigation = useNavigate();
   const handleChange = (e) => {
     setlogin({ ...login, [e.target.name]: e.target.value });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (login.name && login.password) {
+    if (login.email && login.password) {
       const userDetails = userList.find((ele) => {
-        return ele.name === login.name && ele.password === login.password;
+        return ele.email === login.email;
       });
+      userDetails
+        ? setError({ ...error, email: false })
+        : setError({ ...error, email: true });
       if (userDetails) {
-        localStorage.setItem("userData", JSON.stringify(login));
-        navigation("/products");
+        const passwordCheck = userList.find((ele) => {
+          if (ele.email === login.email) {
+            return ele.password === login.password ? true : false;
+          }
+          return false;
+        });
+        passwordCheck
+          ? setError({ ...error, password: false })
+          : setError({ ...error, password: true });
+        console.log(error);
+        if (userDetails && passwordCheck) {
+          localStorage.setItem("userData", JSON.stringify(login));
+          navigation("/products");
+        }
       }
     } else {
     }
@@ -35,16 +51,21 @@ function Registration() {
       >
         <form action="" onSubmit={(e) => handleSubmit(e)}>
           <div>
-            <label htmlFor="name">Name : </label>
+            <label htmlFor="email">Email : </label>
             <br />
             <input
-              type="name"
-              id="name"
-              value={login.name}
-              name="name"
+              type="email"
+              id="email"
+              value={login.email}
+              name="email"
               style={{ width: "250px", height: "30px" }}
               onChange={(e) => handleChange(e)}
             />
+            <div>
+              {error.email && (
+                <span className="text-danger">Please Check Your Email</span>
+              )}
+            </div>
           </div>
           <div>
             <label htmlFor="password" className="mt-2">
@@ -60,6 +81,11 @@ function Registration() {
               style={{ width: "250px", height: "30px" }}
               onChange={(e) => handleChange(e)}
             />
+            <div>
+              {error.password && (
+                <span className="text-danger">Please Check Your Password</span>
+              )}
+            </div>
           </div>
           <button type="submit" className="w-100 btn btn-primary">
             Submit
